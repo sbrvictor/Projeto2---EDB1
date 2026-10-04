@@ -1,13 +1,14 @@
 #include "sorting.hpp"
+#include <algorithm> // Para usar std::swap
 
+// 1. Insertion Sort
 void insertionSort(std::vector<int>& arr, int esq, int dir) {
     // Começa no segundo elemento do sub-array (esq + 1) e vai até dir - 1
     for (int i = esq + 1; i < dir; ++i) {
         int chave = arr[i];
         int j = i - 1;
 
-        // Move os elementos do array (de esq até i-1) que são 
-        // maiores que a chave para uma posição à frente
+        // Move os elementos que são maiores que a chave uma posição para a direita
         while (j >= esq && arr[j] > chave) {
             arr[j + 1] = arr[j];
             j = j - 1;
@@ -51,5 +52,101 @@ void bubbleSort(std::vector<int>& arr, int esq, int dir) {
         }
         // Otimização: Se nenhuma troca ocorreu, o array já está ordenado
         if (!trocou) break;
+    }
+}
+
+// --- Funções Auxiliares e Principais para Quick Sort ---
+
+// Função auxiliar para particionar o array no Quick Sort
+int partition(std::vector<int>& arr, int esq, int dir) {
+    // --- OTIMIZAÇÃO PARA EVITAR STACK OVERFLOW ---
+    // Escolhe o elemento central e coloca-o na última posição
+    int meio = esq + (dir - esq) / 2;
+    std::swap(arr[meio], arr[dir - 1]);
+    // ---------------------------------------------
+
+    int pivot = arr[dir - 1]; // Agora o pivô é um elemento mais equilibrado
+    int i = esq - 1; // Índice do menor elemento
+
+    // Coloca os elementos menores que o pivô à esquerda
+    for (int j = esq; j < dir - 1; ++j) {
+        if (arr[j] <= pivot) {
+            i++;
+            std::swap(arr[i], arr[j]);
+        }
+    }
+    // Coloca o pivô na sua posição final
+    std::swap(arr[i + 1], arr[dir - 1]);
+    return i + 1;
+}
+
+// 4. Quick Sort
+void quickSort(std::vector<int>& arr, int esq, int dir) {
+    // Condição de paragem: se o intervalo tiver mais de 1 elemento
+    if (esq < dir - 1) {
+        // pi é o índice de particionamento (o pivô está na posição correta)
+        int pi = partition(arr, esq, dir);
+
+        // Ordena recursivamente antes e depois da partição
+        // Note a convenção [esq, dir): o pivô 'pi' fica de fora das chamadas
+        quickSort(arr, esq, pi);
+        quickSort(arr, pi + 1, dir);
+    }
+}
+
+// --- Funções Auxiliares e Principais para Merge Sort ---
+
+// Função auxiliar para intercalar (merge) duas metades ordenadas
+void merge(std::vector<int>& arr, int esq, int meio, int dir) {
+    int n1 = meio - esq;
+    int n2 = dir - meio;
+
+    // Vetores temporários para guardar as metades
+    std::vector<int> L(n1), R(n2);
+
+    for (int i = 0; i < n1; i++) L[i] = arr[esq + i];
+    for (int j = 0; j < n2; j++) R[j] = arr[meio + j];
+
+    int i = 0, j = 0, k = esq;
+    
+    // Intercala os dois vetores de volta no array original
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    // Copia os elementos restantes da metade esquerda, se existirem
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    // Copia os elementos restantes da metade direita, se existirem
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+// 5. Merge Sort
+void mergeSort(std::vector<int>& arr, int esq, int dir) {
+    // Condição de paragem: se o intervalo tiver mais de 1 elemento
+    if (dir - esq > 1) {
+        int meio = esq + (dir - esq) / 2;
+
+        // Ordena recursivamente a primeira e a segunda metade
+        mergeSort(arr, esq, meio);
+        mergeSort(arr, meio, dir);
+
+        // Une as metades ordenadas
+        merge(arr, esq, meio, dir);
     }
 }

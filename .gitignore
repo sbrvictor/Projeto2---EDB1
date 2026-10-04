@@ -1,0 +1,5 @@
+# Ignorar os dados gerados
+test_data/
+
+# Ignorar o ficheiro executável compilado
+*.exe
