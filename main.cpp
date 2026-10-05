@@ -7,12 +7,14 @@
 #include "sorting.hpp"
 
 int main() {
-    // 1. Gera os tamanhos dinamicamente ( 100.000 a 500.000 com saltos de 100.000)
+    // 1. Gera os tamanhos dinamicamente (25.000 a 500.000 com saltos de 25.000)
     std::vector<int> tamanhos;
-    for (int i = 100000; i <= 500000; i += 100000) {
+    for (int i = 25000; i <= 500000; i += 25000) {
         tamanhos.push_back(i);
     }
-    std::string pasta_atual = "test_data/melhor_caso/";
+    
+    // Caminho padrão para os testes do pior caso
+    std::string pasta_atual = "test_data/pior_caso/";
     
     const int TRIALS = 5;
     int num_exercicio = 1;
